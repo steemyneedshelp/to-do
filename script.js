@@ -3,6 +3,8 @@ const form = document.querySelector(".todo-form");
 const input = document.querySelector(".todo-input");
 const list = document.querySelector(".todo-list");
 const filterButtons = document.querySelectorAll(".filter-btn");
+const todoCount = document.querySelector(".todo-count");
+const todoEmpty = document.querySelector(".todo-empty");
 
 const themeToggle = document.querySelector(".theme-toggle");
 
@@ -66,9 +68,13 @@ function renderTasks() {
     });
 
     deleteBtn.addEventListener("click", function () {
+    li.classList.add("fade-out");
+
+    setTimeout(function () {
       tasks.splice(index, 1);
       updateApp();
-    });
+    }, 200);
+});
 
     li.appendChild(checkbox);
     li.appendChild(span);
@@ -76,6 +82,19 @@ function renderTasks() {
 
     list.appendChild(li);
   });
+
+  const activeCount = tasks.filter(function (t) {
+  return !t.completed;
+  }).length;
+
+  todoCount.textContent = activeCount + (activeCount === 1 ? " item left" : " items left");
+
+  if (tasks.length === 0) {
+    todoEmpty.classList.remove("hidden");
+  } else {
+    todoEmpty.classList.add("hidden");
+}
+
 }
 
 // Add task
