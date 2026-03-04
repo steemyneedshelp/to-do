@@ -4,6 +4,8 @@ const input = document.querySelector(".todo-input");
 const list = document.querySelector(".todo-list");
 const filterButtons = document.querySelectorAll(".filter-btn");
 
+const themeToggle = document.querySelector(".theme-toggle");
+
 // Data
 let tasks = [];
 let currentFilter = "all";
@@ -17,6 +19,12 @@ if (storedTasks) {
 // Persistence
 function saveTasks() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+const savedTheme = localStorage.getItem("theme");
+
+if (savedTheme === "dark") {
+  document.body.classList.add("dark");
 }
 
 // UI update coordinator
@@ -86,13 +94,30 @@ form.addEventListener("submit", function (event) {
   updateApp();
 });
 
-// Filter button clicks
 filterButtons.forEach(function (button) {
   button.addEventListener("click", function () {
     currentFilter = button.dataset.filter;
-    renderTasks(); // no save needed
+
+    // Remove active class from all buttons
+    filterButtons.forEach(function (btn) {
+      btn.classList.remove("active");
+    });
+
+    // Add active to clicked one
+    button.classList.add("active");
+
+    renderTasks();
   });
 });
 
 // Initial render
 renderTasks();
+
+document.querySelector('[data-filter="all"]').classList.add("active");
+
+themeToggle.addEventListener("click", function () {
+  document.body.classList.toggle("dark");
+
+  const isDark = document.body.classList.contains("dark");
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+});
