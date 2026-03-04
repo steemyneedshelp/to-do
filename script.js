@@ -2,31 +2,42 @@
 const form = document.querySelector(".todo-form");
 const input = document.querySelector(".todo-input");
 const list = document.querySelector(".todo-list");
+const filterButtons = document.querySelectorAll(".filter-btn");
 
+// Data
 let tasks = [];
+let currentFilter = "all";
 
+// Load
 const storedTasks = localStorage.getItem("tasks");
-
 if (storedTasks) {
   tasks = JSON.parse(storedTasks);
 }
 
-//handles persistence onlyy
+// Persistence
 function saveTasks() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 }
-//update coordinates changes
+
+// UI update coordinator
 function updateApp() {
   saveTasks();
   renderTasks();
 }
-//render handles ui
+
+// Render UI
 function renderTasks() {
-  // Clear current list
   list.innerHTML = "";
 
-  // Rebuild from tasks array
-  tasks.forEach(function (task, index) {
+  const filteredTasks = tasks.filter(function (task) {
+    if (currentFilter === "active") return !task.completed;
+    if (currentFilter === "completed") return task.completed;
+    return true; // all
+  });
+
+  filteredTasks.forEach(function (task) {
+    const index = tasks.indexOf(task);
+
     const li = document.createElement("li");
     const checkbox = document.createElement("input");
     const span = document.createElement("span");
@@ -37,18 +48,15 @@ function renderTasks() {
     span.textContent = task.text;
     deleteBtn.textContent = "Delete";
 
-    // Apply completed class if needed
     if (task.completed) {
       li.classList.add("completed");
     }
 
-    // Toggle completed
     checkbox.addEventListener("change", function () {
       tasks[index].completed = checkbox.checked;
       updateApp();
     });
 
-    // Delete task
     deleteBtn.addEventListener("click", function () {
       tasks.splice(index, 1);
       updateApp();
@@ -60,9 +68,9 @@ function renderTasks() {
 
     list.appendChild(li);
   });
-
 }
 
+// Add task
 form.addEventListener("submit", function (event) {
   event.preventDefault();
 
@@ -71,11 +79,20 @@ form.addEventListener("submit", function (event) {
 
   tasks.push({
     text: taskText,
-    completed: false
+    completed: false,
   });
 
   input.value = "";
   updateApp();
 });
 
-  renderTasks();
+// Filter button clicks
+filterButtons.forEach(function (button) {
+  button.addEventListener("click", function () {
+    currentFilter = button.dataset.filter;
+    renderTasks(); // no save needed
+  });
+});
+
+// Initial render
+renderTasks();
