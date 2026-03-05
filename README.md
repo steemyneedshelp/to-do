@@ -29,3 +29,11 @@ what was practiced;
 ~ working with state (array as source of truth)
 
 ~ basic app structure
+
+---------------------------------------
+
+how to use;
+
+~ install the zip file of the full repository or individually install index.html, style.css and script.js and have them all in one directory (folder)
+
+~ open index.html and if asked, open with a browser
